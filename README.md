@@ -1,12 +1,12 @@
-#Adroit Build Tool
+# Adroit Build Tool
 This exe allows developers to remotely build, test and publish any Unity3D project from a Perforce repo.
 
-##Technology Stack
+## Technology Stack
 - Server OS: Windows 11
 - Server runtime: Dino 2 app using typescript
 
-##Features
-###Uses a config.json for default values.
+## Features
+### Features | Uses a config.json for default values.
 (password is managed by windows)
 
 ```json 
@@ -32,7 +32,7 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
 }
 ```
 
-###Can be invoked with command line arguments.
+### Features | Can be invoked with command line arguments.
   
 ```
 adroit-build-tool.exe
