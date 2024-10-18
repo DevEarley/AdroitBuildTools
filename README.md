@@ -6,7 +6,7 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
 - Server runtime: Dino 2 app using typescript
 
 ## Features
-### Features | Uses a config.json for default values.
+### Uses a config.json for default values.
 (password is managed by windows)
 
 ```json 
@@ -32,7 +32,7 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
 }
 ```
 
-### Features | Can be invoked with command line arguments.
+### Can be invoked with command line arguments.
   
 ```
 adroit-build-tool.exe
