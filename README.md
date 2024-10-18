@@ -17,6 +17,14 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
     "username":"AdroitSA",
     "password-keychain-name":"com.adroit.adroit_sa_password" 
   },
+  "twitchAccount":{
+    "username":"AdroitTester2",
+    "password-keychain-name":"com.adroit.adroit_twitch_password" 
+  },
+  "itchIOAccount":{
+    "username":"Adroit",
+    "password-keychain-name":"com.adroit.adroit_itchio_password" 
+  },
   "definedRepos":[
     {
       "name":"MHS",
@@ -50,15 +58,15 @@ adroit-build-tool.exe
 -ri -RI -reimport
   Delete the Library folder to force a reimport of all assets
 
--r -R <repo name>
+-r -R -repo <repo name>
   Pick a repository
 
--t -T <test case>
+-tc -TC -testcase <test case>
   Run automated testing.
 
--p -P
+-p -P -profiling
   Enable profiling.
 
--s -S
+-s -S -stream
   Stream to twitch account
 ```
