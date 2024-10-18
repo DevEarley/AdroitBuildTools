@@ -69,4 +69,21 @@ adroit-build-tool.exe
 
 -s -S -stream
   Stream to twitch account
+
+-tu -TU -twitch-username <username>
+  Set twitch username
+
 ```
+
+### Storing passwords to windows
+Resources:
+[Deno](https://deno.com/)
+
+[Accessing Windows Credential Manager from PowerShell](https://stackoverflow.com/questions/29103238/accessing-windows-credential-manager-from-powershell)
+
+[Gets a PowerShell Credential from the Windows Credential Manager. This only works for Generic Credentials ](https://gist.github.com/cdhunt/5729126)
+
+
+
+
+
