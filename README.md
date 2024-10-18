@@ -75,8 +75,8 @@ adroit-build-tool.exe
 
 ```
 
-### Storing passwords to windows
-Resources:
+## Resources & Links
+
 [Deno](https://deno.com/)
 
 [Accessing Windows Credential Manager from PowerShell](https://stackoverflow.com/questions/29103238/accessing-windows-credential-manager-from-powershell)
