@@ -34,7 +34,7 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
 
 ###Can be invoked with command line arguments.
   
-```bash
+```
 adroit-build-tool.exe
   Run this tool without arguments, it will get latest and build the default repo, without testing or profiling.
 
