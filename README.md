@@ -17,7 +17,7 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
     "username":"AdroitSA",
     "password-keychain-name":"com.adroit.adroit_sa_password" 
   },
-  "definedRepos:[
+  "definedRepos":[
     {
       "name":"MHS",
       "workspaceName":"BuildTool_WS_MHS",
