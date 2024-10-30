@@ -83,7 +83,4 @@ adroit-build-tool.exe
 
 [Gets a PowerShell Credential from the Windows Credential Manager. This only works for Generic Credentials ](https://gist.github.com/cdhunt/5729126)
 
-
-
-
-
+https://docs.deno.com/runtime/tutorials/subprocess/
