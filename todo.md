@@ -18,8 +18,8 @@
 ## MVP requirements
 1) Start deno app when dev clicks link (DONE)
 2) Get latest from P4V using batch file.
-3) Build unity project using batch file.
-4) Upload to google drive (via post (https://developers.google.com/drive/api/guides/manage-uploads#simple))
+3) Build unity project using batch file. (DONE)
+4) Zip & Upload to google drive (via post (https://developers.google.com/drive/api/guides/manage-uploads#simple))
 5) Send messages on discord (using webhooks)
 6) Store / retrieve credentials ( never store passwords as plain-text!! )
  
@@ -29,7 +29,6 @@
 3) Stream on twitch using obs
 
 ## Unity CLI
-
 https://docs.unity3d.com/Manual/EditorCommandLineArguments.html
 
 ## batch files
@@ -92,13 +91,5 @@ using windows "set" command, we need to assign a value  to the P4CLIENT environm
 
 *From [P4 Guide](https://www.perforce.com/manuals/p4guide/Content/P4Guide/tutorial.sync.html)*
 
-### Unity 
 
-```
-set buildDate=%1
-set projectpath="D:\Repos\MHS\MHS2_Upgrade\MHS 2.0"
-set buildpath="D:\Builds\MHS2-"
-set logpath="C:\Users\TheDean\Desktop\build-logs.txt"
-"C:\Program Files\Unity\Editor\Unity.exe" -quit -batchmode -projectpath %projectpath% -buildTarget webgl %buildpath%%buildDate% -logFile %logpath%
-```
 

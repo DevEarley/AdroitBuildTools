@@ -1,1 +1,1 @@
-deno run  --allow-write main.ts %*
+deno run --allow-run --allow-write main.ts %*
