@@ -1,1 +1,2 @@
-echo | tasklist /fi "imagename eq Unity.exe"
+@echo off
+tasklist /fi "imagename eq Unity.exe"

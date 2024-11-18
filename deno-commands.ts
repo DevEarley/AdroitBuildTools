@@ -1,8 +1,8 @@
 
 
-export const getOutputString = (buildUnityProject_output: any) => {
+export const getOutputString = (output: any) => {
     const untrimmed_output = new TextDecoder().decode(
-        buildUnityProject_output["stdout"],
+        output["stdout"],
     );
     const output_string = untrimmed_output.trim();
     return output_string;

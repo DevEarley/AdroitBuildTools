@@ -15,12 +15,20 @@ You will need a couple of "service accounts". It is reccommended you create a ne
 - Unity
 
 ## Setup 
-1) Install TriggerCMD client on your build server. Register client using website. 
-2) Install Deno, 7zip and Unity3D
-3) Open command window with admin permission
-3) run ```setx _gdrive_api_key <api key> \m```
-3) run ```setx _discord_key <api key> \m```
-4) Check ```maint.ts``` for path directories. Make anychanges as needed.
+1) Install Deno, 7Zip, P4V and Unity3D. 
+    - To modify the deno scripts, you may want to use VSCode with the Deno extension.
+2) Add a P4CONFIG file to the workspace's root folder (`D/Repos/MHS` in my case). 
+
+```
+P4CLIENT=UserName_Workspace_MHS2
+P4USER=UserName
+```
+3) Install TriggerCMD client on your build server. Register client using website. 
+ 
+4) Open command window with admin permission
+5) run ```setx _gdrive_api_key <api key> \m```
+6) run ```setx _discord_key <api key> \m```
+7) Check ```maint.ts``` for path directories. Make changes as needed.
 
 ## Run
   

@@ -11,9 +11,10 @@ const arg2 = Deno.args[1];
 const logs: string[] = [];
 
 let buildTime: number = 0;
-
+const files_up_to_date_message = "File(s) up-to-date.";
 const build_batch_path =
     "D:\\Repos\\BuildServer\\BuildServer\\script-build-unity.bat";
+const build_path = "D:\\Repos\\MHS";
 const logs_path = "C:\\Users\\TheDean\\Desktop\\deno-logs.txt";
 const is_unity_running =
     "D:\\Repos\\BuildServer\\BuildServer\\script-is-unity-running.bat";
@@ -26,9 +27,11 @@ const zip_parent_directory = "D:\\Builds";
 
 const get_latest_path =
     "D:\\Repos\\BuildServer\\BuildServer\\script-get-latest.bat";
+const has_latest_path =
+    "D:\\Repos\\BuildServer\\BuildServer\\script-has-latest.bat";
 
 const trigger_command_build_link =
-    "https://triggercmd.com/sb?b=pPp-mTpXm00kpxub";
+    "https://www.triggercmd.com/trigger/bookmark?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib29rbWFya3VzZXJfaWQiOiI2NzIxYThhNzVmM2EyNzAwMTIyZTQzYjciLCJjb21wdXRlcl9pZCI6IjY3MzYzOTlkNzI1M2M5MDAxM2MxYWI1ZCIsImNvbW1hbmRfaWQiOiI2NzM3NmJhNTcyNTNjOTAwMTNjMWUxOGUiLCJleHBpcmVzSW5TZWNvbmRzIjoiIiwiaWF0IjoxNzMxOTQ5MDQ4fQ.t-Wtpdx3AMjHv2djmCHd7YzACsq4PAzDWDF-AqQzTMY";
 const discord_message =
     "Build complete!\n Click this link to do another build:";
 const path_to_build_logs = "C:\\Users\\TheDean\\Desktop\\build-logs.txt";
@@ -48,7 +51,6 @@ const auth = new GoogleAuth({
 const finished = () => {
     deno_discord.logToDiscord(discord_message + trigger_command_build_link);
     const logsWithNewlines = logs.join("\n");
-
     Deno.writeTextFile(
         logs_path,
         logsWithNewlines,
@@ -68,10 +70,22 @@ const getGdriveKey = async (): Promise<any> => {
 
 const getLatest = async (): Promise<any> => {
     try {
-        return await deno_commands.run_command(
-            get_latest_path,
-            [],
+        const has_latest_result = await deno_commands.run_command(
+            has_latest_path,
+            [build_path],
         );
+        const output_string = deno_commands.getOutputString(has_latest_result);
+        if (output_string.includes(files_up_to_date_message)) {
+            deno_discord.logToDiscord(files_up_to_date_message);
+            return;
+        } else {
+            const get_latest_result =  await deno_commands.run_command(
+                get_latest_path,
+                [build_path],
+            );
+            const output_string_get_latest = deno_commands.getOutputString(get_latest_result);
+            console.log(output_string_get_latest);
+        }
     } catch (error) {
         throw error;
     }
@@ -124,7 +138,7 @@ const uploadToGDrive = async (): Promise<any> => {
 
 const buildUnityProject = async (): Promise<any> => {
     try {
-        deno_discord.logToDiscord("Build Unity Project | START");
+        
 
         buildTime = (new Date()).getTime();
         const output = await deno_commands.run_command(
@@ -171,7 +185,7 @@ const checkIsUnityRunning = async (): Promise<any> => {
             throw new Error("Unity is in use. Please try again later.");
         }
     } catch (error) {
-        deno_discord.logToDiscord("errpr | checkIsUnityRunning");
+        deno_discord.logToDiscord("error | checkIsUnityRunning");
 
         throw error;
     }
@@ -185,23 +199,26 @@ const getDeltaTimeInSeconds = () => {
 };
 
 try {
-    deno_discord.logToDiscord("Starting build...");
+    
 
     //TODO - pass this to unity's AdroitBuilder.cs
-    const zip_target_folder = new Date().toLocaleDateString().replaceAll("/", "-");
+    const date_string = new Date().toLocaleDateString();
+    const zip_target_folder = date_string.replaceAll("/", "-");
     const zip_file_name = zip_target_folder + ".zip";
-console.log(zip_target_folder);
-console.log(zip_file_name);
-    //checkIsUnityRunning().then(() => {
-      //  buildUnityProject().then(() => {
-            zip(zip_target_folder, zip_file_name).then(() => {
-                uploadToGDrive().then(() => {
-                    /* Done! */
-                    finished();
+
+    getLatest().then(() => {
+        checkIsUnityRunning().then(() => {
+            deno_discord.logToDiscord("Build Unity Project | START");
+            buildUnityProject().then(() => {
+                zip(zip_target_folder, zip_file_name).then(() => {
+                 //   uploadToGDrive().then(() => {
+                        /* Done! */
+                        finished();
+                  //  });
                 });
             });
-       // });
-    //});
+        });
+    });
 } catch {
     deno_discord.logToDiscord("Finished with errors");
 }

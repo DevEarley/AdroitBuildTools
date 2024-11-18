@@ -1,1 +1,2 @@
-echo | set _gdrive_api_key
+@echo off
+set _gdrive_api_key
