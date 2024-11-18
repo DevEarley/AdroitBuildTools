@@ -19,13 +19,11 @@ export const logToDiscord = async (log_message: string) => {
             "",
         )
     }
-    console.log(`${discord_webhook + discord_webook_key}`);
-    var result = await fetch(`${discord_webhook + discord_webook_key}`, {
+    await fetch(`${discord_webhook + discord_webook_key}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             content: log_message,
         }),
     });
-    console.log(result.status);
 };

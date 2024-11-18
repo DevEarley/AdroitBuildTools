@@ -19,7 +19,7 @@ You will need a couple of "service accounts". It is reccommended you create a ne
 2) Install Deno, 7zip and Unity3D
 3) Open command window with admin permission
 3) run ```setx _gdrive_api_key <api key> \m```
-3) run ```setx _discord_webhook <api key> \m```
+3) run ```setx _discord_key <api key> \m```
 4) Check ```maint.ts``` for path directories. Make anychanges as needed.
 
 ## Run
