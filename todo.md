@@ -93,3 +93,31 @@ using windows "set" command, we need to assign a value  to the P4CLIENT environm
 
 
 
+## Parking Lot
+
+-l -L -latest
+  Get Latest.
+
+-c -C <changelist number>
+  Get a specific Changelist number (runs a clean build)
+  
+-f -F -fresh
+  Delete local copy and get fresh copy from repo
+
+-ri -RI -reimport
+  Delete the Library folder to force a reimport of all assets
+
+-r -R -repo <repo name>
+  Pick a repository
+
+-tc -TC -testcase <test case>
+  Run automated testing.
+
+-p -P -profiling
+  Enable profiling.
+
+-s -S -stream
+  Stream to twitch account
+
+-tu -TU -twitch-username <username>
+  Set twitch username
