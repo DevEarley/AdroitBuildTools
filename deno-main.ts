@@ -8,8 +8,6 @@ let gdrive_api_key = "";
 const arg1 = Deno.args[0];
 const arg2 = Deno.args[1];
 
-const logs: string[] = [];
-
 let buildTime: number = 0;
 const files_up_to_date_message = "File(s) up-to-date.";
 const build_batch_path =
@@ -27,13 +25,15 @@ const zip_parent_directory = "D:\\Builds";
 
 const get_latest_path =
     "D:\\Repos\\BuildServer\\BuildServer\\script-get-latest.bat";
+const get_latest_number_path =
+    "D:\\Repos\\BuildServer\\BuildServer\\script-get-latest-number.bat";
 const has_latest_path =
     "D:\\Repos\\BuildServer\\BuildServer\\script-has-latest.bat";
 
 const trigger_command_build_link =
-    "https://www.triggercmd.com/trigger/bookmark?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib29rbWFya3VzZXJfaWQiOiI2NzIxYThhNzVmM2EyNzAwMTIyZTQzYjciLCJjb21wdXRlcl9pZCI6IjY3MzYzOTlkNzI1M2M5MDAxM2MxYWI1ZCIsImNvbW1hbmRfaWQiOiI2NzM3NmJhNTcyNTNjOTAwMTNjMWUxOGUiLCJleHBpcmVzSW5TZWNvbmRzIjoiIiwiaWF0IjoxNzMxOTQ5MDQ4fQ.t-Wtpdx3AMjHv2djmCHd7YzACsq4PAzDWDF-AqQzTMY";
+"https://www.triggercmd.com/trigger/bookmark?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib29rbWFya3VzZXJfaWQiOiI2NzIxYThhNzVmM2EyNzAwMTIyZTQzYjciLCJjb21wdXRlcl9pZCI6IjY3MzYzOTlkNzI1M2M5MDAxM2MxYWI1ZCIsImNvbW1hbmRfaWQiOiI2NzM3NmJhNTcyNTNjOTAwMTNjMWUxOGUiLCJleHBpcmVzSW5TZWNvbmRzIjoiIiwiaWF0IjoxNzMxOTUxOTA0fQ.RxvIKCsdgaBQHZ6PYUIzEEw9_BSAzTNhLE6KuV9LoeY";
 const discord_message =
-    "Build complete!\n Click this link to do another build:";
+    "Click this link to do another build:\n";
 const path_to_build_logs = "C:\\Users\\TheDean\\Desktop\\build-logs.txt";
 const gdrive_api_key_path =
     "D:\\Repos\\BuildServer\\BuildServer\\script-get-gdrive-key.bat";
@@ -47,9 +47,22 @@ const unity_location =
 const auth = new GoogleAuth({
     scopes: "https://www.googleapis.com/auth/drive",
 });
+const logs: string[] = [];
+let logs_for_discord_part_1: string[] = [];
+let logs_for_discord_part_2: string[] = [];
 
+const log = (message: string,logs_for_discord:string[]) => {
+    logs.push(message);
+    logs_for_discord.push(message);
+};
+
+const updateDiscord = (logs_for_discord:string[]) => {
+    deno_discord.sendLogsToDiscord(logs_for_discord)
+};
 const finished = () => {
-    deno_discord.logToDiscord(discord_message + trigger_command_build_link);
+    log(`========== Upload complete. ✅ ==========`,logs_for_discord_part_2);
+    log(discord_message + trigger_command_build_link,logs_for_discord_part_2);
+    updateDiscord(logs_for_discord_part_2);
     const logsWithNewlines = logs.join("\n");
     Deno.writeTextFile(
         logs_path,
@@ -59,10 +72,18 @@ const finished = () => {
 
 const getGdriveKey = async (): Promise<any> => {
     try {
-        return await deno_commands.run_command(
-            gdrive_api_key,
+         const result = await deno_commands.run_command(
+            gdrive_api_key_path,
             [],
         );
+        const output_string = deno_commands.getOutputString(result);
+       
+        gdrive_api_key =  output_string.replace(
+            "_DISCORD_KEY=",
+            ""
+          );
+        log(output_string,logs_for_discord_part_2);
+
     } catch (error) {
         throw error;
     }
@@ -76,16 +97,33 @@ const getLatest = async (): Promise<any> => {
         );
         const output_string = deno_commands.getOutputString(has_latest_result);
         if (output_string.includes(files_up_to_date_message)) {
-            deno_discord.logToDiscord(files_up_to_date_message);
+            log(files_up_to_date_message,logs_for_discord_part_1);
             return;
         } else {
-            const get_latest_result =  await deno_commands.run_command(
+            const get_latest_result = await deno_commands.run_command(
                 get_latest_path,
                 [build_path],
             );
-            const output_string_get_latest = deno_commands.getOutputString(get_latest_result);
-            console.log(output_string_get_latest);
+            const output_string_get_latest = deno_commands.getOutputString(
+                get_latest_result,
+            );
+            log(output_string_get_latest,logs_for_discord_part_1);
         }
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getLatestNumber = async (): Promise<any> => {
+    try {
+        const result = await deno_commands.run_command(
+            get_latest_number_path,
+            [build_path],
+        );
+        const output_string = deno_commands.getOutputString(
+            result,
+        );
+        log(output_string,logs_for_discord_part_1);
     } catch (error) {
         throw error;
     }
@@ -96,40 +134,52 @@ const zip = async (
     zip_file_name: string,
 ): Promise<any> => {
     try {
-        return await deno_commands.run_command(zip_unity_path, [
+        buildTime = (new Date()).getTime();
+
+        const output = await deno_commands.run_command(zip_unity_path, [
             zip_parent_directory,
             zip_target_folder,
             zip_file_name,
             path_to_build_logs,
         ]);
+        const delta_time_in_seconds = getDeltaTimeInSeconds();
+
+        log(
+          
+                "Zip took " + delta_time_in_seconds + " seconds.",
+                logs_for_discord_part_2);
+        log("zip complete.",logs_for_discord_part_2);
+
     } catch (error) {
         throw error;
     }
 };
 
-const uploadToGDrive = async (): Promise<any> => {
-    deno_discord.logToDiscord("Uploading To GDrive | START");
-    // const service = google.drive({ version: "v3", auth });
-    // const requestBody = {
-    //     name: zip_file_name,
-    //     fields: "id",
-    // };
-    // const media = {
-    //     mimeType: "application/zip",
-    //     body: await Deno.readFile(zip_target_folder),
-    // };
+const uploadToGDrive = async (
+    zip_file_name: string,
+): Promise<any> => {
+    log("Uploading To GDrive | START",logs_for_discord_part_2);
+    const service = google.drive({ version: "v3", auth });
+    const requestBody = {
+        name: zip_file_name,
+        fields: "id",
+    };
+    const media = {
+        mimeType: "application/zip",
+        body: await Deno.readFile(zip_parent_directory + "//" + zip_file_name),
+    };
     try {
-        //     const file = await service.files.create({
-        //         requestBody,
-        //         media: media,
-        //     });
-        //     console.log("File Id:", file.data.id);
-        //     let uploadToGDrive_output = file.data.id;
+        const file = await service.files.create({
+            requestBody,
+            media: media,
+        });
+        log("File Id:" + file.data.id,logs_for_discord_part_2);
+        let uploadToGDrive_output = file.data.id;
 
-        //     deno_discord.logToDiscord(
-        //         "Upload To GDrive | finished" +
-        //             uploadToGDrive_output,
-        //     );
+        deno_discord.logToDiscord(
+            "Upload To GDrive | finished" +
+                uploadToGDrive_output,
+        );
         return true;
     } catch (err) {
         throw err;
@@ -138,8 +188,6 @@ const uploadToGDrive = async (): Promise<any> => {
 
 const buildUnityProject = async (): Promise<any> => {
     try {
-        
-
         buildTime = (new Date()).getTime();
         const output = await deno_commands.run_command(
             build_batch_path,
@@ -155,12 +203,12 @@ const buildUnityProject = async (): Promise<any> => {
         );
         const delta_time_in_seconds = getDeltaTimeInSeconds();
 
-        deno_discord.logToDiscord(
+        log(
             "Build Unity Project | DONE" + output_string + "\n" +
                 "Build took " + delta_time_in_seconds + " seconds.",
-        );
+                logs_for_discord_part_2);
     } catch (error) {
-        deno_discord.logToDiscord("Build Unity Project | | ERROR");
+        log("Build Unity Project | | ERROR",logs_for_discord_part_2);
 
         throw error;
     }
@@ -173,19 +221,19 @@ const checkIsUnityRunning = async (): Promise<any> => {
             [],
         );
         const output_string = deno_commands.getOutputString(output);
-        deno_discord.logToDiscord(output_string);
+        log(output_string,logs_for_discord_part_1);
         const unity_is_not_running = output_string.includes(
             unity_is_not_running_message,
         );
         if (unity_is_not_running) {
-            deno_discord.logToDiscord("Unity is available");
+            log("Unity is available",logs_for_discord_part_1);
             return true;
         } else {
-            deno_discord.logToDiscord("Unity is busy. Please try again later.");
+            log("Unity is busy. Please try again later.",logs_for_discord_part_1);
             throw new Error("Unity is in use. Please try again later.");
         }
     } catch (error) {
-        deno_discord.logToDiscord("error | checkIsUnityRunning");
+        log("error | checkIsUnityRunning",logs_for_discord_part_1);
 
         throw error;
     }
@@ -199,26 +247,33 @@ const getDeltaTimeInSeconds = () => {
 };
 
 try {
-    
-
     //TODO - pass this to unity's AdroitBuilder.cs
     const date_string = new Date().toLocaleDateString();
     const zip_target_folder = date_string.replaceAll("/", "-");
     const zip_file_name = zip_target_folder + ".zip";
+    deno_discord.logToDiscord(`========== Build started. 🏁 ==========`);
+ //   getLatest().then(() => {
+        getLatestNumber().then(() => {
+            checkIsUnityRunning().then(() => {
+                log(`========== Build complete. ✅ Upload started 🏁 ==========`,logs_for_discord_part_1);
+                updateDiscord(logs_for_discord_part_1);
+                // buildUnityProject().then(() => {
 
-    getLatest().then(() => {
-        checkIsUnityRunning().then(() => {
-            deno_discord.logToDiscord("Build Unity Project | START");
-            buildUnityProject().then(() => {
-                zip(zip_target_folder, zip_file_name).then(() => {
-                 //   uploadToGDrive().then(() => {
-                        /* Done! */
-                        finished();
-                  //  });
-                });
-            });
-        });
-    });
+               // setTimeout(() => {
+                  //  zip(zip_target_folder, zip_file_name).then(() => {
+                        
+                        getGdriveKey().then(() => {
+                          //  uploadToGDrive(zip_file_name).then(() => {
+                                /* Done! */
+                                finished();
+                            });
+                        });
+                    });
+              //  }, 10000);
+                 //  });
+          //  });
+     //   });
+   // });
 } catch {
-    deno_discord.logToDiscord("Finished with errors");
+    deno_discord.logToDiscord("========== Finished with errors. ==========");
 }

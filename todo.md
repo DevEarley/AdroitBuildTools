@@ -17,9 +17,9 @@
 
 ## MVP requirements
 1) Start deno app when dev clicks link (DONE)
-2) Get latest from P4V using batch file.
+2) Get latest from P4V using batch file. (DONE)
 3) Build unity project using batch file. (DONE)
-4) Zip & Upload to google drive (via post (https://developers.google.com/drive/api/guides/manage-uploads#simple))
+4) Zip & Upload to google drive 
 5) Send messages on discord (using webhooks)
 6) Store / retrieve credentials ( never store passwords as plain-text!! )
  
@@ -40,7 +40,6 @@ https://docs.unity3d.com/Manual/EditorCommandLineArguments.html
 
 ## Google Drive CLI
 https://developers.google.com/drive/api/guides/manage-uploads#simple (Simple post)
-https://github.com/glotlabs/gdrive (CLI)
 
 ## Discord using webhooks
 https://hookdeck.com/webhooks/platforms/tutorial-how-to-configure-discord-webhooks-using-the-api

@@ -17,7 +17,7 @@ export const logToDiscord = async (log_message: string) => {
     });
 };
 
-export const sendLogsToDiscord = async (log_messages: string[]) => {
+export const sendLogsToDiscord = async (log_messages: string[]) :Promise<any> =>  {
 
     await getDiscordKey();
     await fetch(`${discord_webhook + discord_webook_key}`, {

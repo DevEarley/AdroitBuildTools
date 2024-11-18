@@ -3,8 +3,20 @@ This exe allows developers to remotely build, test and publish any Unity3D proje
 
 ## Service Accounts
 You will need a couple of "service accounts". It is reccommended you create a new SA for each server instance.
-- TriggerCMD SA - One seat is free. After that you will need to pay. 
-- Google Drive SA - Or use Adroit GDrive. 
+- TriggerCMD SA - One seat is free. After that you will need to pay. https://www.triggercmd.com/
+- Google workspace - https://developers.google.com/drive/api/quickstart/js#create_an_api_key
+
+> Create an API key
+> In the Google Cloud console, go to Menu menu > APIs & Services > Credentials.
+> 
+> Go to Credentials - https://console.cloud.google.com/apis/credentials
+> 
+> Click Create credentials > API key.
+> 
+> Your new API key is displayed.
+> 
+> Click Copy content_copy to copy your API key for use in your app's code. The API key can also be found in the "API keys" section of your project's credentials.
+
 - P4V SA - Or you could use your Dev account. 
 
 ## Technology Stack
