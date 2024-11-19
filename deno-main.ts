@@ -15,7 +15,9 @@ const has_latest_path = "D:\\Repos\\BuildServer\\BuildServer\\script-has-latest.
 const is_unity_running = "D:\\Repos\\BuildServer\\BuildServer\\script-is-unity-running.bat";
 const logs_path = "C:\\Users\\TheDean\\Desktop\\deno-logs.txt";
 const path_to_build_logs = "C:\\Users\\TheDean\\Desktop\\build-logs.txt";
-const trigger_command_build_link = "https://www.triggercmd.com/trigger/bookmark?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib29rbWFya3VzZXJfaWQiOiI2NzIxYThhNzVmM2EyNzAwMTIyZTQzYjciLCJjb21wdXRlcl9pZCI6IjY3MzYzOTlkNzI1M2M5MDAxM2MxYWI1ZCIsImNvbW1hbmRfaWQiOiI2NzNiN2VlNDc2N2I1ODAwMTQ2NzA2NWUiLCJleHBpcmVzSW5TZWNvbmRzIjoiIiwiaWF0IjoxNzMyMDM3MzMwfQ.M68O5E6CFMxRZnQI1DmI4kLy2n7HNEtCwjT2E_kCasc";
+
+const trigger_command_build_link = "https://www.triggercmd.com/trigger/bookmark?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib29rbWFya3VzZXJfaWQiOiI2NzIxYThhNzVmM2EyNzAwMTIyZTQzYjciLCJjb21wdXRlcl9pZCI6IjY3MzYzOTlkNzI1M2M5MDAxM2MxYWI1ZCIsImNvbW1hbmRfaWQiOiI2NzNjZDg0OTU0N2ZjZTAwMTNiYjg0NTMiLCJleHBpcmVzSW5TZWNvbmRzIjoiIiwiaWF0IjoxNzMyMDQwNzk3fQ.iCF09geq4NJyTSBr9FS6U2nEZhUAaM8HO9rUyjDCY_A";
+
 const unity_build_function = "AdroitBuilder.BuildProject";
 const unity_is_not_running_message = "INFO: No tasks are running which match the specified criteria.";
 const unity_location = "C:\\Program Files\\Unity\\Hub\\Editor\\2023.2.4f1\\Editor\\Unity.exe";
@@ -83,7 +85,7 @@ const getLatestNumber = async (): Promise<any> => {
         const output_string = deno_commands.getOutputString(
             result,
         );
-        log(output_string, logs_for_discord_part_1);
+        log(output_string, logs_for_discord_part_2);
     } catch (error) {
         throw error;
     }
@@ -104,7 +106,7 @@ const zip = async (
             zip_target_directory
         ]);
         const output_string = deno_commands.getOutputString(result);
-        log(output_string,logs_for_discord_part_2);
+        log(output_string, logs_for_discord_part_2);
         const delta_time_in_seconds = getDeltaTimeInSeconds();
         log(
 
@@ -176,30 +178,37 @@ const getDeltaTimeInSeconds = () => {
     const delta_time_in_seconds = delta_time / 1000.0;
     return delta_time_in_seconds;
 };
-
+let updated_discord_1 = false;
 try {
     //TODO - pass this to unity's AdroitBuilder.cs
     //TODO - use multiple functions in unity to control the scenes
     const date_string = new Date().toLocaleDateString();
     const zip_target_folder = date_string.replaceAll("/", "-");
     const zip_file_name = zip_target_folder + ".zip";
-    deno_discord.logToDiscord(`========== Build started. 🏁 ==========`);
-    getLatest().then(() => {
-        getLatestNumber().then(() => {
-            checkIsUnityRunning().then(() => {
-                updateDiscord(logs_for_discord_part_1);
-               // buildUnityProject().then(() => {
-                    deno_discord.logToDiscord(`========== Build complete. ✅ Zip started 🏁 ==========`);
+    deno_discord.logToDiscord(`========== Get Latest. 🏁 ==========`);
+    checkIsUnityRunning().then(() => {
+        getLatest().then(() => {
+            updateDiscord(logs_for_discord_part_1);
+            updated_discord_1 = true;
+            getLatestNumber().then(() => {
+                deno_discord.logToDiscord(`========== Get Latest complete. ✅ Build started. 🏁 ==========`);
+                buildUnityProject().then(() => {
+                    deno_discord.logToDiscord(`========== Build complete. ✅ Zip started. 🏁 ==========`);
                     setTimeout(() => {
                         zip(zip_target_folder, zip_file_name).then(() => {
-                        log(`========== Zip complete. ✅ ==========`, logs_for_discord_part_2);
+                            log(`========== Zip complete. ✅ ==========`, logs_for_discord_part_2);
                             finished();
                         });
                     }, 5000);
-         //       });
+                });
             });
         });
     });
 } catch {
     deno_discord.logToDiscord("========== Finished with errors. ==========");
+
+    if (updated_discord_1 == false) updateDiscord(logs_for_discord_part_1);
+
+    finished();
+
 }
