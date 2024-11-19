@@ -22,7 +22,7 @@ const unity_location = "C:\\Program Files\\Unity\\Hub\\Editor\\2023.2.4f1\\Edito
 const unity_log_path = "C:\\Users\\TheDean\\Desktop\\build-logs.txt";
 const unity_project_path = "D:\\Repos\\MHS\\MHS2_Upgrade\\MHS 2.0";
 const zip_parent_directory = "D:\\Builds";
-const zip_target_directory = "D:\\Zips\\";
+const zip_target_directory = "D:\\Zips";
 const zip_unity_path = "D:\\Repos\\BuildServer\\BuildServer\\script-zip-build.bat";
 
 
@@ -96,12 +96,15 @@ const zip = async (
     try {
         buildTime = (new Date()).getTime();
 
-        await deno_commands.run_command(zip_unity_path, [
+        const result = await deno_commands.run_command(zip_unity_path, [
             zip_parent_directory,
             zip_target_folder,
             zip_file_name,
             path_to_build_logs,
+            zip_target_directory
         ]);
+        const output_string = deno_commands.getOutputString(result);
+        log(output_string,logs_for_discord_part_2);
         const delta_time_in_seconds = getDeltaTimeInSeconds();
         log(
 
@@ -179,13 +182,13 @@ try {
     //TODO - use multiple functions in unity to control the scenes
     const date_string = new Date().toLocaleDateString();
     const zip_target_folder = date_string.replaceAll("/", "-");
-    const zip_file_name = zip_target_directory + zip_target_folder + ".zip";
+    const zip_file_name = zip_target_folder + ".zip";
     deno_discord.logToDiscord(`========== Build started. 🏁 ==========`);
     getLatest().then(() => {
         getLatestNumber().then(() => {
             checkIsUnityRunning().then(() => {
                 updateDiscord(logs_for_discord_part_1);
-                buildUnityProject().then(() => {
+               // buildUnityProject().then(() => {
                     deno_discord.logToDiscord(`========== Build complete. ✅ Zip started 🏁 ==========`);
                     setTimeout(() => {
                         zip(zip_target_folder, zip_file_name).then(() => {
@@ -193,7 +196,7 @@ try {
                             finished();
                         });
                     }, 5000);
-                });
+         //       });
             });
         });
     });
