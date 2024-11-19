@@ -40,6 +40,10 @@ https://docs.unity3d.com/Manual/EditorCommandLineArguments.html
 
 ## Google Drive CLI
 https://developers.google.com/drive/api/guides/manage-uploads#simple (Simple post)
+https://developers.google.com/drive/api/quickstart/js#create_an_api_key (auth)
+using the CLI - https://github.com/glotlabs/gdrive/blob/main/docs/create_google_api_credentials.md
+https://support.google.com/drive/answer/10838124?hl=en#zippy=%2Cinstall-set-up-drive-for-desktop-for-windows
+
 
 ## Discord using webhooks
 https://hookdeck.com/webhooks/platforms/tutorial-how-to-configure-discord-webhooks-using-the-api
