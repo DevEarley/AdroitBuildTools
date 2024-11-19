@@ -43,6 +43,8 @@ https://developers.google.com/drive/api/guides/manage-uploads#simple (Simple pos
 https://developers.google.com/drive/api/quickstart/js#create_an_api_key (auth)
 using the CLI - https://github.com/glotlabs/gdrive/blob/main/docs/create_google_api_credentials.md
 https://support.google.com/drive/answer/10838124?hl=en#zippy=%2Cinstall-set-up-drive-for-desktop-for-windows
+https://zapier.com/ 
+https://zapier.com/apps/discord/integrations/google-drive/1766350/send-channel-messages-in-discord-for-updated-files-in-google-drive
 
 
 ## Discord using webhooks
