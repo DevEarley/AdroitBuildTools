@@ -41,8 +41,16 @@ const updateDiscord = (logs_for_discord: string[]) => {
     deno_discord.sendLogsToDiscord(logs_for_discord)
 };
 const finished = () => {
-    log(discord_message + trigger_command_build_link, logs_for_discord_part_2);
-    updateDiscord(logs_for_discord_part_2);
+    if (updated_discord_1 == false) {
+        logs_for_discord_part_1.push(...logs_for_discord_part_2);
+        updateDiscord(logs_for_discord_part_1);
+
+    }
+    else{
+
+        log(discord_message + trigger_command_build_link, logs_for_discord_part_2);
+        updateDiscord(logs_for_discord_part_2);
+    }
     const logsWithNewlines = logs.join("\n");
     Deno.writeTextFile(
         logs_path,
@@ -192,22 +200,22 @@ try {
             updated_discord_1 = true;
             getLatestNumber().then(() => {
                 deno_discord.logToDiscord(`========== Get Latest complete. ✅ Build started. 🏁 ==========`);
-                buildUnityProject().then(() => {
+               // buildUnityProject().then(() => {
                     deno_discord.logToDiscord(`========== Build complete. ✅ Zip started. 🏁 ==========`);
-                    setTimeout(() => {
+                  
                         zip(zip_target_folder, zip_file_name).then(() => {
                             log(`========== Zip complete. ✅ ==========`, logs_for_discord_part_2);
                             finished();
                         });
-                    }, 5000);
+                  
                 });
-            });
+           // });
         });
     });
 } catch {
     deno_discord.logToDiscord("========== Finished with errors. ==========");
 
-    if (updated_discord_1 == false) updateDiscord(logs_for_discord_part_1);
+ 
 
     finished();
 
