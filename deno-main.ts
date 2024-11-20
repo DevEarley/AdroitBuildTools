@@ -29,28 +29,21 @@ const zip_unity_path = "D:\\Repos\\BuildServer\\BuildServer\\script-zip-build.ba
 
 
 const logs: string[] = [];
-let logs_for_discord_part_1: string[] = [];
-let logs_for_discord_part_2: string[] = [];
+let logs_for_discord: string[] = [];
 
-const log = (message: string, logs_for_discord: string[]) => {
+const log = (message: string) => {
     logs.push(message);
     logs_for_discord.push(message);
 };
 
-const updateDiscord = (logs_for_discord: string[]) => {
+const updateDiscord = () => {
     deno_discord.sendLogsToDiscord(logs_for_discord)
 };
 const finished = () => {
-    if (updated_discord_1 == false) {
-        logs_for_discord_part_1.push(...logs_for_discord_part_2);
-        updateDiscord(logs_for_discord_part_1);
-
-    }
-    else{
-
-        log(discord_message + trigger_command_build_link, logs_for_discord_part_2);
-        updateDiscord(logs_for_discord_part_2);
-    }
+  
+    log(discord_message + trigger_command_build_link);
+    updateDiscord();
+    //}
     const logsWithNewlines = logs.join("\n");
     Deno.writeTextFile(
         logs_path,
@@ -67,7 +60,7 @@ const getLatest = async (): Promise<any> => {
         );
         const output_string = deno_commands.getOutputString(has_latest_result);
         if (output_string.includes(files_up_to_date_message)) {
-            log(files_up_to_date_message, logs_for_discord_part_1);
+            log(files_up_to_date_message);
             return;
         } else {
             const get_latest_result = await deno_commands.run_command(
@@ -77,7 +70,7 @@ const getLatest = async (): Promise<any> => {
             const output_string_get_latest = deno_commands.getOutputString(
                 get_latest_result,
             );
-            log(output_string_get_latest, logs_for_discord_part_1);
+            log(output_string_get_latest);
         }
     } catch (error) {
         throw error;
@@ -93,7 +86,7 @@ const getLatestNumber = async (): Promise<any> => {
         const output_string = deno_commands.getOutputString(
             result,
         );
-        log(output_string, logs_for_discord_part_2);
+        log(output_string);
     } catch (error) {
         throw error;
     }
@@ -114,13 +107,10 @@ const zip = async (
             zip_target_directory
         ]);
         const output_string = deno_commands.getOutputString(result);
-        log(output_string, logs_for_discord_part_2);
+        log(output_string);
         const delta_time_in_seconds = getDeltaTimeInSeconds();
-        log(
-
-            "Zip took " + delta_time_in_seconds + " seconds.",
-            logs_for_discord_part_2);
-        log("zip complete.", logs_for_discord_part_2);
+        log(  "Zip took " + delta_time_in_seconds + " seconds.");
+        log("zip complete.");
 
     } catch (error) {
         throw error;
@@ -147,10 +137,9 @@ const buildUnityProject = async (): Promise<any> => {
 
         log(
             "Build Unity Project | DONE" + output_string + "\n" +
-            "Build took " + delta_time_in_seconds + " seconds.",
-            logs_for_discord_part_2);
+            "Build took " + delta_time_in_seconds + " seconds.");
     } catch (error) {
-        log("Build Unity Project | | ERROR", logs_for_discord_part_2);
+        log("Build Unity Project | | ERROR");
 
         throw error;
     }
@@ -163,19 +152,19 @@ const checkIsUnityRunning = async (): Promise<any> => {
             [],
         );
         const output_string = deno_commands.getOutputString(output);
-        log(output_string, logs_for_discord_part_1);
+        log(output_string);
         const unity_is_not_running = output_string.includes(
             unity_is_not_running_message,
         );
         if (unity_is_not_running) {
-            log("Unity is available", logs_for_discord_part_1);
+            log("Unity is available");
             return true;
         } else {
-            log("Unity is busy. Please try again later.", logs_for_discord_part_1);
+            log("Unity is busy. Please try again later.");
             throw new Error("Unity is in use. Please try again later.");
         }
     } catch (error) {
-        log("error | checkIsUnityRunning", logs_for_discord_part_1);
+        log("error | checkIsUnityRunning");
         throw error;
     }
 };
@@ -186,37 +175,31 @@ const getDeltaTimeInSeconds = () => {
     const delta_time_in_seconds = delta_time / 1000.0;
     return delta_time_in_seconds;
 };
-let updated_discord_1 = false;
+
 try {
     //TODO - pass this to unity's AdroitBuilder.cs
     //TODO - use multiple functions in unity to control the scenes
     const date_string = new Date().toLocaleDateString();
     const zip_target_folder = date_string.replaceAll("/", "-");
     const zip_file_name = zip_target_folder + ".zip";
-    deno_discord.logToDiscord(`========== Get Latest. 🏁 ==========`);
+    deno_discord.logToDiscord(`========== Get Latest. 🏁  ${new Date().toLocaleTimeString()} ==========`);
     checkIsUnityRunning().then(() => {
         getLatest().then(() => {
-            updateDiscord(logs_for_discord_part_1);
-            updated_discord_1 = true;
             getLatestNumber().then(() => {
-                deno_discord.logToDiscord(`========== Get Latest complete. ✅ Build started. 🏁 ==========`);
-               // buildUnityProject().then(() => {
-                    deno_discord.logToDiscord(`========== Build complete. ✅ Zip started. 🏁 ==========`);
-                  
-                        zip(zip_target_folder, zip_file_name).then(() => {
-                            log(`========== Zip complete. ✅ ==========`, logs_for_discord_part_2);
-                            finished();
-                        });
-                  
+                deno_discord.logToDiscord(`========== Get Latest complete. ✅ Build started. 🏁 ${new Date().toLocaleTimeString()}==========`);
+              //  buildUnityProject().then(() => {
+                    deno_discord.logToDiscord(`========== Build complete. ✅ Zip started. 🏁 ${new Date().toLocaleTimeString()}==========`);
+                    zip(zip_target_folder, zip_file_name).then(() => {
+                        deno_discord.logToDiscord(`========== Zip complete. ✅ ${new Date().toLocaleTimeString()}==========`);
+                        finished();
+                    });
+
                 });
-           // });
+        //    });
         });
     });
 } catch {
     deno_discord.logToDiscord("========== Finished with errors. ==========");
-
- 
-
     finished();
 
 }

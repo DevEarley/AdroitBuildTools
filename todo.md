@@ -1,5 +1,15 @@
 # Todo
 
+## Blockers
+Background services not getting triggered. 
+https://www.triggercmd.com/forum/topic/3155/background-commands-not-running
+
+## Need
+Group with unlimited timeout for P4 (need admin to set that up)
+Zapier account
+Google Account
+TriggerCMD Account
+
 ## Desired functionality 
 0) User clicks link and with query params (TriggerCMD)
 1) WoL is invoked and PC is turned on. (nice to have, requires a second server, kinda defeats the point)
@@ -37,6 +47,8 @@ https://docs.unity3d.com/Manual/EditorCommandLineArguments.html
 >   %0 is the executable (batch file) name as specified in the command line.
 >   %* is all parameters specified in the command line -- this is very useful if you want to forward the parameters to another program.
 > (from stack overflow)
+## Zapier
+https://zapier.com/editor/268098332/published
 
 ## Google Drive CLI
 https://developers.google.com/drive/api/guides/manage-uploads#simple (Simple post)
