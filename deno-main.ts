@@ -36,15 +36,10 @@ const log = (message: string) => {
     logs_for_discord.push(message);
 };
 
-const updateDiscord = () => {
-        let _logs = logs_for_discord.join('\n');
-    deno_discord.sendLogsToDiscord(_logs)
-};
 const finished = () => {
   
     log(discord_message + trigger_command_build_link);
-    updateDiscord();
-    //}
+
     const logsWithNewlines = logs.join("\n");
     Deno.writeTextFile(
         logs_path,
@@ -60,8 +55,8 @@ const getLatest = async (): Promise<any> => {
             [build_path],
         );
         const output_string = deno_commands.getOutputString(has_latest_result);
+        log(files_up_to_date_message);
         if (output_string.includes(files_up_to_date_message)) {
-            log(files_up_to_date_message);
             return;
         } else {
             const get_latest_result = await deno_commands.run_command(
@@ -87,7 +82,7 @@ const getLatestNumber = async (): Promise<any> => {
         const output_string = deno_commands.getOutputString(
             result,
         );
-        log(output_string);
+        deno_discord.logToDiscord(output_string);
     } catch (error) {
         throw error;
     }
@@ -110,10 +105,10 @@ const zip = async (
         const output_string = deno_commands.getOutputString(result);
         log(output_string);
         const delta_time_in_seconds = getDeltaTimeInSeconds();
-        log(  "Zip took " + delta_time_in_seconds + " seconds.");
-        log("zip complete.");
+        deno_discord.logToDiscord(  "Zip took " + delta_time_in_seconds + " seconds.");
 
     } catch (error) {
+        deno_discord.logToDiscord("Zip project | | ERROR");
         throw error;
     }
 };
@@ -136,11 +131,11 @@ const buildUnityProject = async (): Promise<any> => {
         );
         const delta_time_in_seconds = getDeltaTimeInSeconds();
 
-        log(
+        deno_discord.logToDiscord(
             "Build Unity Project | DONE" + output_string + "\n" +
             "Build took " + delta_time_in_seconds + " seconds.");
     } catch (error) {
-        log("Build Unity Project | | ERROR");
+        deno_discord.logToDiscord("Build Unity Project | | ERROR");
 
         throw error;
     }
@@ -158,14 +153,13 @@ const checkIsUnityRunning = async (): Promise<any> => {
             unity_is_not_running_message,
         );
         if (unity_is_not_running) {
-            log("Unity is available");
             return true;
         } else {
-            log("Unity is busy. Please try again later.");
+            deno_discord.logToDiscord("Unity is busy. Please try again later.");
             throw new Error("Unity is in use. Please try again later.");
         }
     } catch (error) {
-        log("error | checkIsUnityRunning");
+        deno_discord.logToDiscord("error | checkIsUnityRunning");
         throw error;
     }
 };
