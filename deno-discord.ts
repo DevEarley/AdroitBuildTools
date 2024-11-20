@@ -17,14 +17,14 @@ export const logToDiscord = async (log_message: string) => {
     });
 };
 
-export const sendLogsToDiscord = async (log_messages: string[]) :Promise<any> =>  {
+export const sendLogsToDiscord = async (log_messages: string) :Promise<any> =>  {
 
     await getDiscordKey();
     await fetch(`${discord_webhook + discord_webook_key}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            content: log_messages.join("\n"),
+            content: log_messages,
         }),
     });
 };

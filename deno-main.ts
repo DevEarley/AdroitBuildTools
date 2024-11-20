@@ -37,7 +37,8 @@ const log = (message: string) => {
 };
 
 const updateDiscord = () => {
-    deno_discord.sendLogsToDiscord(logs_for_discord)
+        let _logs = logs_for_discord.join('\n');
+    deno_discord.sendLogsToDiscord(_logs)
 };
 const finished = () => {
   
@@ -187,7 +188,7 @@ try {
         getLatest().then(() => {
             getLatestNumber().then(() => {
                 deno_discord.logToDiscord(`========== Get Latest complete. ✅ Build started. 🏁 ${new Date().toLocaleTimeString()}==========`);
-              //  buildUnityProject().then(() => {
+               buildUnityProject().then(() => {
                     deno_discord.logToDiscord(`========== Build complete. ✅ Zip started. 🏁 ${new Date().toLocaleTimeString()}==========`);
                     zip(zip_target_folder, zip_file_name).then(() => {
                         deno_discord.logToDiscord(`========== Zip complete. ✅ ${new Date().toLocaleTimeString()}==========`);
@@ -195,7 +196,7 @@ try {
                     });
 
                 });
-        //    });
+           });
         });
     });
 } catch {
